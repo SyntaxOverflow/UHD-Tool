@@ -1,45 +1,75 @@
 ### Functions ###
-
-function test {
-    if ([string]::IsNullOrWhiteSpace($Eingabefeld.Text)) {
-        $Ausgabefeld.Text = "Keine Eingabe!"
+function f_ping {
+    if ([string]::IsNullOrWhiteSpace($cInput.Text)) {
+        $cOutput.Text = "Invalid input"
         return
     }
-    
-    $Eingabe = $Eingabefeld.Text.Trim()
-    
-    $Ausgabefeld.Text = "Deine Eingabe war: $Eingabe"
+    $cHostname = $cInput.Text.Trim()
+    $cOutput.Text = "Pinging $cHostname"
+    ping $cHostname | Where-Object { $cOutput.AppendText($_ + "`r`n"); $window.Dispatcher.Invoke([action] { }, "Render") }
+}
 
-    $Eingabefeld.Items.Insert(0, $Eingabe)
+function f_msra {
+    if ([string]::IsNullOrWhiteSpace($cInput.Text)) {
+        $cOutput.Text = "Invalid input"
+        return
+    }
+    $cHostname = $cInput.Text.Trim()
+    msra.exe /offerra $cHostname
+    if($cInput.Items.Count -eq 0 -OR $cHostname -ne $cInput.Items.item(0)){$cInput.Items.Insert(0,$cHostname)}
+    $cInput.Text = ""
+}
+
+function f_mstsc {
+    if ([string]::IsNullOrWhiteSpace($cInput.Text)) {
+        $cOutput.Text = "Invalid input"
+        return
+    }
+    $cHostname = $cInput.Text.Trim()
+    mstsc.exe /v:$cHostname
+    if($cInput.Items.Count -eq 0 -OR $cHostname -ne $cInput.Items.item(0)){$cInput.Items.Insert(0,$cHostname)}
+    $cInput.Text = ""
+}
+
+function f_info {
+    if ([string]::IsNullOrWhiteSpace($cInput.Text)) {
+        $cOutput.Text = "Invalid input"
+        return
+    }
+    $cHostname = $cInput.Text.Trim()
+    if($cInput.Items.Count -eq 0 -OR $cHostname -ne $cInput.Items.item(0)){$cInput.Items.Insert(0,$cHostname)}
+    $cInput.Text = ""
+}
+
+function f_user {
+    if ([string]::IsNullOrWhiteSpace($uInput.Text)) {
+        $uOutput.Text = "Invalid input"
+        return
+    }
+    $uSamAccountName = $uInput.Text.Trim()
+    $UserData = Get-ADUser $uSamAccountName
+    #Needs testing!
+    #$uOutput.Text = $UserData.ToString()
+    #$UserData | Where-Object { $uOutput.AppendText($_ + "`r`n")}
 }
 
 ### GUI ###
-
 #Add WPF
 Add-Type -AssemblyName PresentationFramework
 
 #Get GUI xaml
-[xml]$xaml = Get-Content "$PSScriptRoot\gui.xml"
+[xml]$xaml = (Get-Content "$PSScriptRoot\gui.xml") -replace "x:Name=", "Name="
 $reader = (New-Object System.Xml.XmlNodeReader $xaml)
 $window = [Windows.Markup.XamlReader]::Load($reader)
+#Create a Variable foreach xaml element with a name
+$xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $window.FindName($_.Name) }
 
-#Get GUI Elements
-$Eingabefeld = $window.FindName("Eingabefeld")
-$Knopf1 = $window.FindName("Knopf1")
-$Knopf2 = $window.FindName("Knopf2")
-$Knopf3 = $window.FindName("Knopf3")
-$Knopf4 = $window.FindName("Knopf4")
-$Knopf5 = $window.FindName("Knopf5")
-$Knopf6 = $window.FindName("Knopf6")
-$Ausgabefeld = $window.FindName("Ausgabefeld")
-
-#Give buttons a purpose
-$Knopf1.Add_Click{ (test) }
-$Knopf2.Add_Click{ (test) }
-$Knopf3.Add_Click{ (test) }
-$Knopf4.Add_Click{ (test) }
-$Knopf5.Add_Click{ (test) }
-$Knopf6.Add_Click{ (test) }
+#Give Buttons a purpose
+$cPing.Add_Click({ f_ping })
+$cMSRA.Add_Click({ f_msra })
+$cMSTSC.Add_Click({ f_mstsc })
+$cInfo.Add_Click({ f_info })
+$uSearch.Add_Click({ f_user })
 
 #Show-Gui
 [void]$window.ShowDialog()

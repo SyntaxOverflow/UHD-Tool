@@ -2,26 +2,38 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Language="de-de"
-        Title="Remote-Assistant" WindowStartupLocation="CenterScreen" MinHeight="300" MinWidth="300" Height="500" Width="500" FontSize="16"
-    >
-    <DockPanel Margin="3">
-        <GroupBox Header="Eingabe" DockPanel.Dock="Top">
-            <ComboBox IsEditable="True" x:Name="Eingabefeld"/>
-        </GroupBox>
-        <GroupBox Header="Funktionen" DockPanel.Dock="Left">
-            <StackPanel>
-                <Button Margin="0,2" Content="Funktion 1" x:Name="Knopf1"/>
-                <Button Margin="0,2" Content="Funktion 2" x:Name="Knopf2"/>
-                <Separator/>
-                <Button Margin="0,2" Content="Funktion 3" x:Name="Knopf3"/>
-                <Button Margin="0,2" Content="Funktion 4" x:Name="Knopf4"/>
-                <Separator Margin="0,2"/>
-                <Button Margin="0,2" Content="Funktion 5" x:Name="Knopf5"/>
-                <Button Margin="0,2" Content="Funktion 6" x:Name="Knopf6"/>
-            </StackPanel>
-        </GroupBox>
-        <GroupBox Header="Ausgabe">
-            <TextBox IsReadOnly="True" x:Name="Ausgabefeld"/>
-        </GroupBox>
-    </DockPanel>
+        Title="UHD Tool" Height="500" Width="500" FontSize="14" MinWidth="300" MinHeight="300" WindowStartupLocation="CenterScreen">
+    <TabControl>
+        <TabItem Header="Computer">
+            <DockPanel>
+                <GroupBox Header="Hostname" DockPanel.Dock="Top">
+                    <ComboBox x:Name="cInput" IsEditable="True"/>
+                </GroupBox>
+                <GroupBox Header="Action">
+                    <StackPanel>
+                        <Button x:Name="cPing" Content="Ping" Margin="0,2"/>
+                        <Button x:Name="cMSRA" Content="Remote Assistance" Margin="0,2"/>
+                        <Button x:Name="cMSTSC" Content="Remote Desktop" Margin="0,2"/>
+                        <Button x:Name="cInfo" Content="Get info" Margin="0,2"/>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Header="Output">
+                    <TextBox x:Name="cOutput" IsReadOnly="True" BorderThickness="0"/>
+                </GroupBox>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="User">
+            <DockPanel>
+                <GroupBox Header="SamAccountName" DockPanel.Dock="Top">
+                    <DockPanel>
+                        <Button x:Name="uSearch" Content="Search" DockPanel.Dock="Right" Margin="2,0,2,0" Width="100"/>
+                        <ComboBox x:Name="uInput" IsEditable="True"/>
+                    </DockPanel>
+                </GroupBox>
+                <GroupBox Header="Output">
+                    <TextBox x:Name="uOutput" IsReadOnly="True" BorderThickness="0"/>
+                </GroupBox>
+            </DockPanel>
+        </TabItem>
+    </TabControl>
 </Window>
